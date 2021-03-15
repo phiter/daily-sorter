@@ -7,8 +7,11 @@
     <button class="sort" @click="sortNames">Sort</button>
   </div>
   <ul class="sorted">
-    <li class="person" v-for="(name, index) of sortedNames" :key="name + index">
-      <button class="personbtn" @click="setDone">{{name}}</button>
+    <li class="person" v-for="(person, index) of sortedNames" :key="person.name + index">
+      <label :class="{done: person.done }">
+        <input type="checkbox" @click="person.done = !person.done" />
+        {{person.name}}
+      </label>
       <div v-if="index !== sortedNames.length - 1" class="arrow">⬇️</div>
     </li>
   </ul>
@@ -20,12 +23,25 @@ import { computed, ref, watch } from 'vue'
 const urlParams = new URLSearchParams(window.location.search);
 const urlNames = urlParams.get('names') || '';
 
+interface Person {
+  name: string;
+  done: boolean;
+}
+
 const namesString = ref<string>(urlNames);
 const names = computed(() => namesString.value.split(',').map(name => name.trim()).filter(s => s));
-const sortedNames = ref<string[]>([]);
+const sortedNames = ref<Person[]>([]);
 
 const sortNames = () => {
-   sortedNames.value = [...names.value].sort(() => .5 - Math.random());
+   const namesArray = [...names.value].sort(() => .5 - Math.random());
+   const people: Person[] = [];
+   namesArray.forEach((name) => {
+     people.push({
+       done: false,
+       name
+    });
+  });
+  sortedNames.value = people;
 };
 
 sortNames();
@@ -61,9 +77,6 @@ watch(names, () => {
 .person {
   margin: 5px auto;
 }
-.personbtn {
-  width: 100%;
-}
 .arrow {
   margin-top: 5px;
 }
@@ -85,5 +98,8 @@ watch(names, () => {
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 10px;
+}
+.done {
+  text-decoration: line-through;
 }
 </style>
