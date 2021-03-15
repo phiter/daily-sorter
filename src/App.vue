@@ -8,7 +8,7 @@
   </div>
   <ul class="sorted">
     <li class="person" v-for="(person, index) of sortedNames" :key="person.name + index">
-      <label :class="{done: person.done }">
+      <label :class="{personlabel: true, done: person.done }">
         <input type="checkbox" @click="person.done = !person.done" />
         {{person.name}}
       </label>
@@ -73,6 +73,7 @@ watch(names, () => {
   align-items: center;
   flex-direction: column;
   padding: 0;
+  user-select: none;
 }
 .person {
   margin: 5px auto;
@@ -98,6 +99,9 @@ watch(names, () => {
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 10px;
+}
+.personlabel{
+  padding: 5px;
 }
 .done {
   text-decoration: line-through;
