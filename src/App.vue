@@ -19,6 +19,24 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
+const shuffle = function (array: string[]) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlNames = urlParams.get('names') || '';
@@ -33,7 +51,7 @@ const names = computed(() => namesString.value.split(',').map(name => name.trim(
 const sortedNames = ref<Person[]>([]);
 
 const sortNames = () => {
-   const namesArray = [...names.value].sort(() => .5 - Math.random());
+   const namesArray = shuffle([...names.value]);
    const people: Person[] = [];
    namesArray.forEach((name) => {
      people.push({
