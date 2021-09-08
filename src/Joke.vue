@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import random from 'lodash.random';
 
 interface IJoke {
     setup: string;
@@ -7,13 +8,18 @@ interface IJoke {
 }
 
 const joke = ref<IJoke | null>(null);
+const jokes = ref<IJoke[]>([]);
 const reveal = ref(false);
 
+onMounted(async () => {
+    const response = await fetch('https://raw.githubusercontent.com/15Dkatz/official_joke_api/master/jokes/index.json').then(r => r.json()) as IJoke[];
+    jokes.value = response;
+})
 const getJoke = async () => {
     reveal.value = false;
     joke.value = null;
-    const response = await fetch('https://official-joke-api.appspot.com/jokes/random').then(r => r.json()) as IJoke;
-    joke.value = response;
+    
+    joke.value = jokes.value[random(0, jokes.value.length - 1)];
 }
 </script>
 <template>
