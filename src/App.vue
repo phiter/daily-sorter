@@ -1,6 +1,6 @@
 <template>
   <label>
-    <div>List of names, comma separated:</div>
+    <div>List of names, semicolon separated:</div>
     <textarea class="people" v-model="namesString" />
   </label>
   <div>
@@ -45,7 +45,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const urlNames = urlParams.get('names') || '';
 
 const namesString = ref<string>(urlNames);
-const names = computed(() => namesString.value.split(',').map(name => name.trim()).filter(s => s));
+const names = computed(() => namesString.value.split(';').map(name => name.trim()).filter(s => s));
 const sortedNames = ref<IPerson[]>([]);
 
 const sortNames = () => {
@@ -71,7 +71,7 @@ const removePerson = (index: number) => {
 }
 watch(names, () => {
   if (names.value.length > 0) {
-    urlParams.set('names', names.value.join(', '));
+    urlParams.set('names', names.value.join('; '));
     history.replaceState(null, 'Daily sorter', "?" + urlParams.toString());
   }
 });
