@@ -1,57 +1,31 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import sample from "lodash.sample";
-import { facts } from "./facts";
 
 interface IJoke {
   setup: string;
-  punchline: string;
+  punchline?: string;
 }
 
 const joke = ref<IJoke | null>(null);
 const revealJoke = ref(false);
 const revealPunchline = ref(false);
+const selectedType = ref<keyof typeof options>('Joke time!');
 
-const jokeApiUrl =
-  "https://v2.jokeapi.dev/joke/Programming,Pun?blacklistFlags=nsfw,religious,political,racist,sexist,explicit&type=twopart";
-const factApiUrl = "https://uselessfacts.jsph.pl/random.json?language=en";
-const dogApiUrl = "https://dog-api.kinduff.com/api/facts";
-const meowApiUrl = "https://meowfacts.herokuapp.com/";
-const numbersApiUrl = "http://numbersapi.com/random/";
-
-const getRandomJokeFromApi = async () => {
-  const response = await fetch(jokeApiUrl).then((r) => r.json());
+const options = {
+  'Joke time!': async () => {
+  const response = await fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit").then((r) => r.json());
 
   return {
-    setup: `Q: ${response.setup}`,
-    punchline: `A: ${response.delivery}`,
+    setup: response.setup ? `Q: ${response.setup}` : response.joke,
+    punchline: response.delivery ? `A: ${response.delivery}` : undefined,
   };
-};
-
-const getRandomFact = async () => ({
-  setup: `Fact of the day:`,
-  punchline: (await fetch(factApiUrl).then((r) => r.json())).text,
-});
-
-const getRandomStaticFact = async () => ({
-  setup: `Fact of the day:`,
-  punchline: sample(facts).text,
-});
-
-const getDogFactFromApi = async () => ({
-  setup: `Dog fact of the day:`,
-  punchline: (await fetch(dogApiUrl).then((r) => r.json())).facts[0],
-});
-
-const getMeowFactFromApi = async () => ({
-  setup: `Meow fact of the day:`,
-  punchline: (await fetch(meowApiUrl).then((r) => r.json())).data[0],
-});
-
-const getNumberFactFromApi = async () => ({
-  setup: `Number fact of the day:`,
-  punchline: await fetch(numbersApiUrl).then((r) => r.text()),
-});
+},
+  'Get random fact': async () => ({setup: (await fetch('https://uselessfacts.jsph.pl/random.json?language=en').then((r) => r.json())).text}),
+  'Get dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
+  'Get cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
+  'Get number fact': async () => ({setup: await fetch("http://numbersapi.com/random/").then((r) => r.text())})
+}
 
 const getJoke = async () => {
   revealPunchline.value = false;
@@ -61,14 +35,7 @@ const getJoke = async () => {
   } else {
     joke.value = null;
 
-    const promiseFn = sample([
-      getRandomJokeFromApi,
-      getRandomFact,
-      getDogFactFromApi,
-      getMeowFactFromApi,
-      getNumberFactFromApi,
-      getRandomStaticFact,
-    ]);
+    const promiseFn = options[selectedType.value];
 
     joke.value = await promiseFn();
   }
@@ -77,15 +44,21 @@ const getJoke = async () => {
 onMounted(async () => {
   await getJoke();
 });
+
 </script>
 <template>
   <div class="joke">
-    <button @click="getJoke()">Joke time!</button>
+    <div class="block">
+      <select class="selector" v-model="selectedType">
+        <option v-for="(option, title) in options">{{ title }}</option>
+      </select>
+      <button class="go" @click="getJoke()">Go!</button>
+    </div>
     <div style="margin-top: 30px; font-weight: bold" v-if="joke && revealJoke">
       {{ joke.setup }}
 
       <div v-if="joke.punchline" style="margin-top: 30px">
-        <div v-if="!reveal">
+        <div v-if="!revealPunchline">
           <button @click="revealPunchline = true">Reveal</button>
         </div>
         <div style="margin-top: 30px; font-weight: bold" v-if="revealPunchline">
@@ -99,5 +72,70 @@ onMounted(async () => {
 <style scoped>
 .joke {
   margin-top: 100px;
+}
+.selector {
+  max-width: 600px;
+  resize: vertical;
+  border: 1px solid #6ddbff;
+  padding: 10px;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.go {
+  background: #6d9bff;
+  border: white;
+  color: white;
+  padding: 10px 20px;
+  padding-bottom: 11px;
+  font-size: 16px;
+  border-radius: 5px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+
+.block {
+	position: relative;
+  display: inline-block;
+	background: white;
+  border-radius: 5px;
+}
+
+.block:after, .block:after {
+	content: '';
+	position: absolute;
+	left: -2px;
+	top: -2px;
+	background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094, 
+		#0000ff, #00ff00,#ffff00, #ff0000);
+	background-size: 200%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+	z-index: -1;
+	animation: steam 5s linear infinite;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.block:hover:after, .block:hover:after {
+  opacity: 1;
+}
+
+@keyframes steam {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 400% 0;
+	}
+}
+
+.block:after {
+	filter: blur(20px);
 }
 </style>
