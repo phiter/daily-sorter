@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-import sample from "lodash.sample";
 
 interface IJoke {
   setup: string;
@@ -26,6 +25,11 @@ const options = {
   'Get cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
   'Get number fact': async () => ({setup: await fetch("http://numbersapi.com/random/").then((r) => r.text())})
 }
+
+const images = {
+  'Get cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
+  'Get dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`
+} as any;
 
 const getJoke = async () => {
   revealPunchline.value = false;
@@ -64,6 +68,10 @@ onMounted(async () => {
         <div style="margin-top: 30px; font-weight: bold" v-if="revealPunchline">
           {{ joke.punchline }}
         </div>
+      </div>
+
+      <div v-if="selectedType in images" style="margin-top: 30px;">
+        <img height="200" :src="images[selectedType]()" />
       </div>
     </div>
   </div>
