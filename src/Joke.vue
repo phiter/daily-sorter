@@ -53,7 +53,7 @@ onMounted(async () => {
 <template>
   <div class="joke">
     <div class="block">
-      <select class="selector" v-model="selectedType">
+      <select class="selector" v-model="selectedType" @change="joke = null">
         <option v-for="(option, title) in options">{{ title }}</option>
       </select>
       <button class="go" @click="getJoke()">Go!</button>
