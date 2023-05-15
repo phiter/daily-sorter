@@ -12,7 +12,13 @@ const joke = ref<IJoke | null>(null);
 const revealJoke = ref(false);
 const revealPunchline = ref(false);
 const selectedType = ref<keyof typeof options>('😜 Joke time!');
-
+const selectRandomType = () => {
+  const keys = Object.keys(options);
+  const randomIndex = Math.floor(Math.random() * keys.length);
+  selectedType.value = keys[randomIndex] as any;
+  joke.value = null;
+  getJoke();
+};
 const options = {
   '😜 Joke time!': async () => {
     const response = await fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit").then((r) => r.json());
@@ -22,9 +28,9 @@ const options = {
       punchline: response.delivery ? `A: ${response.delivery}` : undefined,
     };
   },
-  '👨🏻 Get dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
-  '🤓 Get random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
-  '❓ Get riddle': async () => {
+  '👨🏻 Dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
+  '🤓 Random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
+  '❓ Riddle': async () => {
     const response = await fetch('https://api.api-ninjas.com/v1/riddles', ninjaHeaders).then((r) => r.json());
 
     return {
@@ -33,13 +39,13 @@ const options = {
       punchline: response[0].answer,
     } satisfies IJoke;
   },
-  '🐶 Get dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
-  '🐱 Get cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
+  '🐶 Dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
+  '🐱 Cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
 }
 
 const images = {
-  '🐶 Get dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
-  '🐱 Get cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
+  '🐶 Dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
+  '🐱 Cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
 } as any;
 
 const getJoke = async () => {
@@ -67,6 +73,9 @@ onMounted(async () => {
       <select class="selector" v-model="selectedType" @change="joke = null">
         <option v-for="(option, title) in options">{{ title }}</option>
       </select>
+      <button class="go random" title="Choose random type" @click="selectRandomType">
+        <svg fill="#fff" height="18px" width="18px" viewBox="-4 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>shuffle</title> <path d="M0 20.688v2c0 0.281 0.219 0.5 0.5 0.5h2.875c1.688 0 3.094-0.781 4.25-1.969 1.188-1.188 2.156-2.781 3.125-4.313 0.781-1.25 1.563-2.438 2.375-3.344 0.781-0.938 1.563-1.5 2.5-1.5h2.656v2.281c0 0.719 0.5 0.844 1.094 0.375l4.344-3.625c0.375-0.313 0.375-0.906 0-1.219l-4.344-3.594c-0.594-0.5-1.094-0.375-1.094 0.375v2.406h-2.656c-1.719 0-3.063 0.75-4.25 1.969-1.156 1.188-2.219 2.781-3.156 4.281-0.813 1.281-1.563 2.5-2.375 3.406-0.781 0.906-1.563 1.469-2.469 1.469h-2.875c-0.281 0-0.5 0.219-0.5 0.5zM0 9.531v2c0 0.281 0.219 0.5 0.5 0.5h2.875c1.406 0 2.531 1.375 3.75 3.156 0.031-0.094 0.063-0.156 0.094-0.219 0.031-0.031 0.125-0.094 0.156-0.156 0.469-0.781 1-1.531 1.5-2.344-0.75-0.969-1.469-1.844-2.406-2.438-0.906-0.625-1.906-0.969-3.094-0.969h-2.875c-0.344 0-0.5 0.156-0.5 0.469zM18.281 20.125h-2.656c-1.375 0-2.563-1.344-3.75-3.094-0.063 0.094-0.094 0.156-0.125 0.219-0.063 0.063-0.094 0.125-0.156 0.219-0.219 0.375-0.5 0.781-0.719 1.156-0.25 0.344-0.5 0.75-0.719 1.094 0.719 0.969 1.469 1.813 2.375 2.406 0.875 0.625 1.906 1.031 3.094 1.031h2.656v2.188c0 0.719 0.5 0.875 1.094 0.375l4.344-3.656c0.375-0.313 0.375-0.875 0-1.188l-4.344-3.594c-0.594-0.469-1.094-0.375-1.094 0.375v2.469z"></path> </g></svg>
+      </button>
       <button class="go" @click="getJoke()">Go!</button>
     </div>
     <div style="margin-top: 30px; font-weight: bold" v-if="joke && revealJoke">
@@ -77,7 +86,7 @@ onMounted(async () => {
 
       <div v-if="joke.punchline" style="margin-top: 30px">
         <div v-if="!revealPunchline">
-          <button @click="revealPunchline = true">Reveal</button>
+          <button class="sort" @click="revealPunchline = true">Reveal</button>
         </div>
         <div style="margin-top: 30px; font-weight: bold" v-if="revealPunchline">
           {{ joke.punchline }}
@@ -108,7 +117,6 @@ onMounted(async () => {
     outline: none;
   }
 }
-
 .go {
   background: #6d9bff;
   border: white;
@@ -119,12 +127,18 @@ onMounted(async () => {
   border-radius: 5px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+  &.random {
+    background-color: #6ddbff;
+    border-radius: 0;
+    padding: 9px 14px;
+  }
 }
 
 
 .block {
 	position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 	background: white;
   border-radius: 5px;
 }

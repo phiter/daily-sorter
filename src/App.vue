@@ -77,7 +77,7 @@ watch(names, () => {
 });
 </script>
 
-<style>
+<style lang="scss">
 * {
   box-sizing: border-box;
 }
@@ -145,5 +145,11 @@ watch(names, () => {
 
 button {
   cursor: pointer;
+  &:hover {
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
+  }
+  &:active {
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75) inset;
+  }
 }
 </style>
