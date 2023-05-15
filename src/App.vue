@@ -106,13 +106,13 @@ watch(names, () => {
   user-select: none;
 }
 .arrow {
-  border: 2px solid #6ddbff;
+  border: 2px solid #6d9bff;
   border-top-color: transparent;
   border-right-color: transparent;
-  width: 20px;
-  height: 20px;
+  width: 12px;
+  height: 12px;
   transform: rotate(-45deg);
-  margin: 5px auto;
+  margin: 3px auto;
   margin-bottom: 10px;
   position: relative;
   right: 5px;

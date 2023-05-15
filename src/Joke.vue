@@ -2,33 +2,44 @@
 import { onMounted, ref } from "vue";
 
 interface IJoke {
+  title?: string;
   setup: string;
   punchline?: string;
 }
-
+const uppercaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const ninjaHeaders = { headers: { 'X-Api-Key': (import.meta as any).env.VITE_NINJA }};
 const joke = ref<IJoke | null>(null);
 const revealJoke = ref(false);
 const revealPunchline = ref(false);
-const selectedType = ref<keyof typeof options>('Joke time!');
+const selectedType = ref<keyof typeof options>('😜 Joke time!');
 
 const options = {
-  'Joke time!': async () => {
-  const response = await fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit").then((r) => r.json());
+  '😜 Joke time!': async () => {
+    const response = await fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=nsfw,religious,political,racist,sexist,explicit").then((r) => r.json());
 
-  return {
-    setup: response.setup ? `Q: ${response.setup}` : response.joke,
-    punchline: response.delivery ? `A: ${response.delivery}` : undefined,
-  };
-},
-  'Get random fact': async () => ({setup: (await fetch('https://uselessfacts.jsph.pl/random.json?language=en').then((r) => r.json())).text}),
-  'Get dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
-  'Get cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
-  'Get number fact': async () => ({setup: await fetch("http://numbersapi.com/random/").then((r) => r.text())})
+    return {
+      setup: response.setup ? `Q: ${response.setup}` : response.joke,
+      punchline: response.delivery ? `A: ${response.delivery}` : undefined,
+    };
+  },
+  '👨🏻 Get dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
+  '🤓 Get random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
+  '❓ Get riddle': async () => {
+    const response = await fetch('https://api.api-ninjas.com/v1/riddles', ninjaHeaders).then((r) => r.json());
+
+    return {
+      title: response[0].title,
+      setup: response[0].question,
+      punchline: response[0].answer,
+    } satisfies IJoke;
+  },
+  '🐶 Get dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
+  '🐱 Get cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
 }
 
 const images = {
-  'Get cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
-  'Get dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`
+  '🐶 Get dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
+  '🐱 Get cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
 } as any;
 
 const getJoke = async () => {
@@ -59,7 +70,10 @@ onMounted(async () => {
       <button class="go" @click="getJoke()">Go!</button>
     </div>
     <div style="margin-top: 30px; font-weight: bold" v-if="joke && revealJoke">
-      {{ joke.setup }}
+      <h4 v-if="joke.title">
+        {{ joke.title }}
+      </h4>
+      {{ uppercaseFirstLetter(joke.setup) }}
 
       <div v-if="joke.punchline" style="margin-top: 30px">
         <div v-if="!revealPunchline">
@@ -77,18 +91,22 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .joke {
-  margin-top: 100px;
+  margin-top: 60px;
 }
 .selector {
   max-width: 600px;
   resize: vertical;
   border: 1px solid #6ddbff;
   padding: 10px;
-  border-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  &:focus {
+    outline: none;
+  }
 }
 
 .go {
