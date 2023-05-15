@@ -145,6 +145,7 @@ watch(names, () => {
 
 button {
   cursor: pointer;
+  font-weight: bold;
   &:hover {
     box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
   }
