@@ -138,9 +138,10 @@ onMounted(async () => {
 .block {
 	position: relative;
   display: inline-flex;
-  align-items: center;
+  align-items: stretch;
 	background: white;
   border-radius: 5px;
+  height: 40px;
 }
 
 .block:after, .block:after {
