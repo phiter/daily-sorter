@@ -39,7 +39,7 @@ const options = {
       punchline: response[0].answer,
     } satisfies IJoke;
   },
-  '🐶 Dog fact': async () => ({setup: (await fetch("https://dog-api.kinduff.com/api/facts").then((r) => r.json())).facts[0]}),
+  '🐶 Dog fact': async () => ({setup: (await fetch("https://dogapi.dog/api/v2/facts").then((r) => r.json())).data[0].attributes.body}),
   '🐱 Cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
 }
 
