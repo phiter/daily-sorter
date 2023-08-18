@@ -1,4 +1,7 @@
 <template>
+  <button class="pip-button" v-if="isPipEnabled" @click="openPip">
+    ⧉
+  </button>
   <label>
     <div>List of names, comma separated:</div>
     <textarea class="people" v-model="namesString" />
@@ -21,6 +24,7 @@ import { computed, ref, watch } from 'vue'
 import Person from './Person.vue';
 import Joke from './Joke.vue';
 import { Person as IPerson } from './types';
+import { openPip, isPipEnabled } from './pip';
 
 const shuffle = function (array: string[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
@@ -90,12 +94,24 @@ watch(names, () => {
   margin-top: 60px;
   margin: 60px auto;
 }
+.pip-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+#app.pip {
+  margin: 8px auto 30px;
+  .pip-button {
+    display: none;
+  }
+}
+
 @media (min-width: 1200px) {
   #app {
     width: 80%;
   }
 }
-
 .sorted {
   list-style: none;
   display: flex;
