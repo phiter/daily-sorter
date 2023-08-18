@@ -24,15 +24,16 @@ export const openPip = async () => {
     });
 
     pipWindow.addEventListener("pagehide", (event) => {
+        document.body.innerHTML = '';
         const playerContainer = document.querySelector("body");
         const pipPlayer = event.target.querySelector("#app");
         playerContainer.append(pipPlayer);
         app.style.margin = undefined;
-
         app.classList.remove('pip');
     });
 
     pipWindow.document.body.append(app);
+    document.body.innerHTML = '<span>Document is opened in PIP window</span>';
 }
 
 export const isPipEnabled = 'documentPictureInPicture' in window;
