@@ -31,12 +31,11 @@ const options = {
   '👨🏻 Dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
   '🤓 Random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
   '❓ Riddle': async () => {
-    const response = await fetch('https://api.api-ninjas.com/v1/riddles', ninjaHeaders).then((r) => r.json());
+    const response = await fetch('https://riddles-api.vercel.app/random', ninjaHeaders).then((r) => r.json());
 
     return {
-      title: response[0].title,
-      setup: response[0].question,
-      punchline: response[0].answer,
+      setup: response.riddle,
+      punchline: response.answer,
     } satisfies IJoke;
   },
   '🐶 Dog fact': async () => ({setup: (await fetch("https://dogapi.dog/api/v2/facts").then((r) => r.json())).data[0].attributes.body}),
