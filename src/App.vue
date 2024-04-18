@@ -25,7 +25,9 @@ import Person from './Person.vue';
 import Joke from './Joke.vue';
 import { Person as IPerson } from './types';
 import { openPip, isPipEnabled } from './pip';
+import { inject } from '@vercel/analytics';
 
+inject();
 const shuffle = function (array: string[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
