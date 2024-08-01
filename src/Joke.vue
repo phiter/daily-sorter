@@ -5,7 +5,10 @@ interface IJoke {
   title?: string;
   setup: string;
   punchline?: string;
+  image?: string;
+  image_alt?: string;
 }
+
 const uppercaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 const ninjaHeaders = { headers: { 'X-Api-Key': (import.meta as any).env.VITE_NINJA }};
 const joke = ref<IJoke | null>(null);
@@ -30,6 +33,17 @@ const options = {
   },
   '👨🏻 Dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
   '🤓 Random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
+  '💻 Random xkcd': async () => {
+    const response = await fetch('https://xkcd.com/info.0.json').then((r) => r.json());
+    const randomComicNumber = Math.floor(Math.random() * response.num) + 1;
+    const randomComic = await fetch(`https://xkcd.com/${randomComicNumber}/info.0.json`).then((r) => r.json());
+
+    return {
+      title: randomComic.title,
+      image: randomComic.img,
+      image_alt: randomComic.alt,
+    };
+  },
   '❓ Riddle': async () => {
     const response = await fetch('https://riddles-api.vercel.app/random', ninjaHeaders).then((r) => r.json());
 
@@ -38,14 +52,15 @@ const options = {
       punchline: response.answer,
     } satisfies IJoke;
   },
-  '🐶 Dog fact': async () => ({setup: (await fetch("https://dogapi.dog/api/v2/facts").then((r) => r.json())).data[0].attributes.body}),
-  '🐱 Cat fact': async () => ({setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0]}),
+  '🐶 Dog fact': async () => ({
+    setup: (await fetch("https://dogapi.dog/api/v2/facts").then((r) => r.json())).data[0].attributes.body,
+    image: `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
+  }),
+  '🐱 Cat fact': async () => ({
+    setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0],
+    image: `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`
+  }),
 }
-
-const images = {
-  '🐶 Dog fact': () => `https://thedogapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
-  '🐱 Cat fact': () => `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`,
-} as any;
 
 const getJoke = async () => {
   revealPunchline.value = false;
@@ -92,8 +107,8 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div v-if="selectedType in images" style="margin-top: 30px;">
-        <img height="200" :src="images[selectedType]()" />
+      <div v-if="joke.image" style="margin-top: 30px;">
+        <img height="400" :src="joke.image" :alt="joke.image_alt" />
       </div>
     </div>
   </div>
