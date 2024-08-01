@@ -34,12 +34,12 @@ const options = {
   '👨🏻 Dad joke': async () => ({setup: (await fetch("https://icanhazdadjoke.com/", {headers: { Accept: 'application/json' }}).then((r) => r.json())).joke}),
   '🤓 Random fact': async () => ({setup: (await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then((r) => r.json()))[0].fact}),
   '💻 Random xkcd': async () => {
-    const response = await fetch('https://xkcd.com/info.0.json').then((r) => r.json());
+    const response = await fetch('https://xkcd.vercel.app/?comic=latest').then((r) => r.json());
     const randomComicNumber = Math.floor(Math.random() * response.num) + 1;
-    const randomComic = await fetch(`https://xkcd.com/${randomComicNumber}/info.0.json`).then((r) => r.json());
+    const randomComic = await fetch(`https://xkcd.vercel.app/?comic=${randomComicNumber}`).then((r) => r.json());
 
     return {
-      title: randomComic.title,
+      setup: randomComic.title,
       image: randomComic.img,
       image_alt: randomComic.alt,
     };
