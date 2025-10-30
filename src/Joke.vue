@@ -45,11 +45,12 @@ const options = {
     };
   },
   '❓ Riddle': async () => {
-    const response = await fetch('https://riddles-api.vercel.app/random', ninjaHeaders).then((r) => r.json());
-
+    const response = await fetch('https://api.api-ninjas.com/v1/riddles', ninjaHeaders).then((r) => r.json());
+    const riddle = response[0];
     return {
-      setup: response.riddle,
-      punchline: response.answer,
+      title: riddle.title,
+      setup: riddle.question,
+      punchline: riddle.answer,
     } satisfies IJoke;
   },
   '🐶 Dog fact': async () => ({
