@@ -63,7 +63,7 @@ const options = {
     setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0],
     image: `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`
   }),
-  '🌍 Random location': async () => ({ setup: '', isGeoguessr: true }),
+  '🌍 Random location (beta)': async () => ({ setup: '', isGeoguessr: true }),
 }
 
 const getJoke = async () => {
