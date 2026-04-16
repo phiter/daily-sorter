@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
+import GeoGuessr from "./GeoGuessr.vue";
 
 interface IJoke {
   title?: string;
@@ -7,6 +8,7 @@ interface IJoke {
   punchline?: string;
   image?: string;
   image_alt?: string;
+  isGeoguessr?: boolean;
 }
 
 const uppercaseFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -61,6 +63,7 @@ const options = {
     setup: (await fetch("https://meowfacts.herokuapp.com/").then((r) => r.json())).data[0],
     image: `https://thecatapi.com/api/images/get?format=src&type=gif&nocache=${new Date().toUTCString()}`
   }),
+  '🌍 Random location': async () => ({ setup: '', isGeoguessr: true }),
 }
 
 const getJoke = async () => {
@@ -93,24 +96,32 @@ onMounted(async () => {
       </button>
       <button class="go" @click="getJoke()">Go!</button>
     </div>
-    <div style="margin-top: 30px; font-weight: bold" v-if="joke && revealJoke">
-      <h4 v-if="joke.title">
-        {{ joke.title }}
-      </h4>
-      {{ uppercaseFirstLetter(joke.setup) }}
+    <div style="margin-top: 30px;" v-if="joke && revealJoke">
+      <GeoGuessr
+        v-if="joke.isGeoguessr"
+        key="geoguessr"
+      />
+      <template v-else>
+        <div style="font-weight: bold">
+          <h4 v-if="joke.title">
+            {{ joke.title }}
+          </h4>
+          {{ uppercaseFirstLetter(joke.setup) }}
 
-      <div v-if="joke.punchline" style="margin-top: 30px">
-        <div v-if="!revealPunchline">
-          <button class="sort" @click="revealPunchline = true">Reveal</button>
-        </div>
-        <div style="margin-top: 30px; font-weight: bold" v-if="revealPunchline">
-          {{ joke.punchline }}
-        </div>
-      </div>
+          <div v-if="joke.punchline" style="margin-top: 30px">
+            <div v-if="!revealPunchline">
+              <button class="sort" @click="revealPunchline = true">Reveal</button>
+            </div>
+            <div style="margin-top: 30px; font-weight: bold" v-if="revealPunchline">
+              {{ joke.punchline }}
+            </div>
+          </div>
 
-      <div v-if="joke.image" style="margin-top: 30px;">
-        <img height="400" :src="joke.image" :alt="joke.image_alt" />
-      </div>
+          <div v-if="joke.image" style="margin-top: 30px;">
+            <img height="400" :src="joke.image" :alt="joke.image_alt" />
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
