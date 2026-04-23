@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const apiKey = (import.meta as any).env.VITE_GEO;
 
@@ -13,6 +13,7 @@ const score = ref<number | null>(null);
 const panoramaError = ref(false);
 const mapExpanded = ref(false);
 const loading = ref(true);
+const initialized = ref(false);
 
 let gMap: any = null;
 let guessMarker: any = null;
@@ -21,8 +22,6 @@ let initialPano = '';
 let actualLat = 0;
 let actualLng = 0;
 
-// Curated list of city/suburb coordinates with guaranteed Street View coverage.
-// Picking directly from this list means exactly ONE API call per game — no retry loop.
 const knownLocations: { lat: number; lng: number }[] = [
   // USA
   { lat: 40.758, lng: -73.9855 }, { lat: 40.6782, lng: -73.9442 },
@@ -167,13 +166,28 @@ watch(mapExpanded, () => {
   setTimeout(triggerMapResize, 320);
 });
 
-onMounted(async () => {
+const init = async () => {
+  initialized.value = true;
+  guessLat.value = null;
+  guessLng.value = null;
+  submitted.value = false;
+  distance.value = null;
+  score.value = null;
+  panoramaError.value = false;
+  mapExpanded.value = false;
+  loading.value = true;
+  gMap = null;
+  guessMarker = null;
+  panorama = null;
+  initialPano = '';
+  actualLat = 0;
+  actualLng = 0;
+
   if (!apiKey) { loading.value = false; return; }
   try {
     await loadGoogleMapsApi();
     const google = (globalThis as any).google;
 
-    // Guess map
     gMap = new google.maps.Map(mapRef.value!, {
       center: { lat: 2, lng: 0 },
       zoom: 2,
@@ -191,7 +205,6 @@ onMounted(async () => {
       guessMarker = new google.maps.Marker({ position: e.latLng, map: gMap });
     });
 
-    // Pick one location from the curated list and create the panorama directly.
     const location = randomLocation();
     actualLat = location.lat;
     actualLng = location.lng;
@@ -220,7 +233,7 @@ onMounted(async () => {
     panoramaError.value = true;
     loading.value = false;
   }
-});
+};
 
 const submitGuess = () => {
   if (guessLat.value === null || guessLng.value === null || !gMap) return;
@@ -264,19 +277,17 @@ const submitGuess = () => {
   bounds.extend({ lat: actualLat, lng: actualLng });
   gMap.fitBounds(bounds, 40);
 };
+
+defineExpose({ load: init });
 </script>
 
 <template>
-  <div class="geoguessr-container">
-    <!-- Panorama fills everything -->
+  <div v-if="initialized" class="geoguessr-container">
     <div ref="panoramaRef" class="panorama"></div>
 
-    <!-- Loading spinner -->
     <div v-if="loading" class="center-warning">
       🌍 Finding a location with Street View coverage…
     </div>
-
-    <!-- Overlays for missing key / no coverage -->
     <div v-else-if="!apiKey" class="center-warning">
       ⚠️ Add <code>VITE_GEO</code> to your <code>.env</code> to enable Street View.
     </div>
@@ -284,7 +295,6 @@ const submitGuess = () => {
       ⚠️ Could not find Street View coverage after several attempts. Try again!
     </div>
 
-    <!-- Return to start button -->
     <button
       v-if="!loading && !submitted && !panoramaError && apiKey"
       class="return-btn"
@@ -294,7 +304,6 @@ const submitGuess = () => {
       ⌂
     </button>
 
-    <!-- Floating map overlay -->
     <div v-show="!loading && !panoramaError && apiKey" class="map-overlay" :class="{ expanded: mapExpanded, submitted }">
       <div class="map-toolbar">
         <span v-if="!submitted" class="map-hint">Click to place your pin</span>
@@ -328,13 +337,11 @@ const submitGuess = () => {
   user-select: none;
 }
 
-/* ── Panorama ──────────────────────────────────────────── */
 .panorama {
   position: absolute;
   inset: 0;
 }
 
-/* ── Center warnings ───────────────────────────────────── */
 .center-warning {
   position: absolute;
   inset: 0;
@@ -354,7 +361,6 @@ const submitGuess = () => {
   }
 }
 
-/* ── Return-to-start button ────────────────────────────── */
 .return-btn {
   position: absolute;
   top: 14px;
@@ -376,7 +382,6 @@ const submitGuess = () => {
   }
 }
 
-/* ── Floating map overlay ──────────────────────────────── */
 $map-w-sm: 480px;
 $map-h-sm: 340px;
 $map-w-lg: 960px;

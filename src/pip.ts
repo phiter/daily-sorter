@@ -1,7 +1,10 @@
 // @ts-nocheck
+export let pipWindow: Window | null = null;
+
 export const openPip = async () => {
     const app = document.querySelector('#app')!;
-    const pipWindow = await window.documentPictureInPicture.requestWindow({ height: 900, width: 350 });
+    const pipWin = await window.documentPictureInPicture.requestWindow({ height: 900, width: 350 });
+    pipWindow = pipWin;
     app.classList.add('pip');
 
     // Copy styles
@@ -11,7 +14,7 @@ export const openPip = async () => {
             const style = document.createElement('style');
         
             style.textContent = cssRules;
-            pipWindow.document.head.appendChild(style);
+            pipWin.document.head.appendChild(style);
         } catch (e) {
             const link = document.createElement('link');
         
@@ -19,11 +22,12 @@ export const openPip = async () => {
             link.type = styleSheet.type;
             link.media = styleSheet.media;
             link.href = styleSheet.href;
-            pipWindow.document.head.appendChild(link);
+            pipWin.document.head.appendChild(link);
         }
     });
 
-    pipWindow.addEventListener("pagehide", (event) => {
+    pipWin.addEventListener("pagehide", (event) => {
+        pipWindow = null;
         document.body.innerHTML = '';
         const playerContainer = document.querySelector("body");
         const pipPlayer = event.target.querySelector("#app");
@@ -32,7 +36,10 @@ export const openPip = async () => {
         app.classList.remove('pip');
     });
 
-    pipWindow.document.body.append(app);
+    pipWin.document.body.append(app);
+    if (document.documentElement.classList.contains('dark')) {
+        pipWin.document.documentElement.classList.add('dark');
+    }
     document.body.innerHTML = '<span>Document is opened in PIP window</span>';
 }
 

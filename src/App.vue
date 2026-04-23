@@ -1,7 +1,12 @@
 <template>
-  <button class="pip-button" v-if="isPipEnabled" @click="openPip">
-    ⧉
-  </button>
+  <div class="top-controls">
+    <button class="pip-button" v-if="isPipEnabled" @click="openPip" title="Picture in picture">
+      ⧉
+    </button>
+    <button class="theme-toggle" @click="toggleDark" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+      {{ isDark ? '☀️' : '🌙' }}
+    </button>
+  </div>
   <label>
     <div>List of names, comma separated:</div>
     <textarea class="people" v-model="namesString" />
@@ -16,18 +21,46 @@
       <div v-if="index !== sortedNames.length - 1" class="arrow" />
     </template>
   </ul>
-  <Joke />
+  <FunTime />
 </template>
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import Person from './Person.vue';
-import Joke from './Joke.vue';
+import FunTime from './fun-time/FunTime.vue';
 import { Person as IPerson } from './types';
-import { openPip, isPipEnabled } from './pip';
+import { openPip, isPipEnabled, pipWindow } from './pip';
 import { inject } from '@vercel/analytics';
 
 inject();
+
+// Dark mode
+const getSystemDarkMode = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+const savedTheme = localStorage.getItem('theme');
+const isDark = ref(savedTheme ? savedTheme === 'dark' : getSystemDarkMode());
+
+const applyTheme = (dark: boolean) => {
+  document.documentElement.classList.toggle('dark', dark);
+  if (pipWindow) {
+    pipWindow.document.documentElement.classList.toggle('dark', dark);
+  }
+};
+
+const toggleDark = () => {
+  isDark.value = !isDark.value;
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+  applyTheme(isDark.value);
+};
+
+applyTheme(isDark.value);
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('theme')) {
+    isDark.value = e.matches;
+    applyTheme(e.matches);
+  }
+});
+
 const shuffle = function (array: string[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -84,6 +117,33 @@ watch(names, () => {
 </script>
 
 <style lang="scss">
+:root {
+  --color-text: #2c3e50;
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #6ddbff;
+  --color-accent: #6d9bff;
+  --color-person-border: rgba(0, 0, 0, 0.2);
+  --color-person-hover: rgba(109, 218, 255, 0.29);
+  --color-input-bg: #ffffff;
+}
+
+html.dark {
+  --color-text: #c9d1d9;
+  --color-bg: #0d1117;
+  --color-surface: #161b22;
+  --color-border: #4aa8cc;
+  --color-accent: #5a85e0;
+  --color-person-border: rgba(255, 255, 255, 0.15);
+  --color-person-hover: rgba(109, 218, 255, 0.15);
+  --color-input-bg: #1c2128;
+}
+
+body {
+  background: var(--color-bg);
+  transition: background 0.2s, color 0.2s;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -92,15 +152,32 @@ watch(names, () => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--color-text);
   margin-top: 60px;
   margin: 60px auto;
+  padding-top: 50px;
+  transition: color 0.2s;
 }
+.top-controls {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  gap: 6px;
+  z-index: 100;
+}
+.theme-toggle,
 .pip-button {
   background: none;
-  border: none;
+  border: 1px solid var(--color-person-border);
+  border-radius: 8px;
   font-size: 20px;
+  padding: 4px 10px;
   cursor: pointer;
+  color: var(--color-text);
+  &:hover {
+    background: var(--color-person-hover);
+  }
 }
 #app.pip {
   margin: 8px auto 30px;
@@ -124,7 +201,7 @@ watch(names, () => {
   user-select: none;
 }
 .arrow {
-  border: 2px solid #6d9bff;
+  border: 2px solid var(--color-accent);
   border-top-color: transparent;
   border-right-color: transparent;
   width: 12px;
@@ -139,12 +216,15 @@ watch(names, () => {
   width: 100%;
   max-width: 600px;
   resize: vertical;
-  border: 1px solid #6ddbff;
+  border: 1px solid var(--color-border);
   padding: 10px;
   border-radius: 5px;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 .sort {
-  background: #6ddbff;
+  background: var(--color-border);
   border: white;
   color: white;
   padding: 10px 20px;
@@ -152,7 +232,7 @@ watch(names, () => {
   border-radius: 10px;
 }
 .next {
-  background: #6d9bff;
+  background: var(--color-accent);
   border: white;
   color: white;
   padding: 10px 20px;

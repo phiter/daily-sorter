@@ -133,18 +133,21 @@ onMounted(async () => {
 .selector {
   max-width: 600px;
   resize: vertical;
-  border: 1px solid #6ddbff;
+  border: 1px solid var(--color-border);
   padding: 10px;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
   &:focus {
     outline: none;
   }
 }
 .go {
-  background: #6d9bff;
+  background: var(--color-accent);
   border: white;
   color: white;
   padding: 10px 20px;
@@ -154,7 +157,7 @@ onMounted(async () => {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   &.random {
-    background-color: #6ddbff;
+    background-color: var(--color-border);
     border-radius: 0;
     padding: 9px 14px;
   }
@@ -165,9 +168,10 @@ onMounted(async () => {
 	position: relative;
   display: inline-flex;
   align-items: stretch;
-	background: white;
+	background: var(--color-surface);
   border-radius: 5px;
   height: 40px;
+  transition: background 0.2s;
 }
 
 .block:after, .block:after {

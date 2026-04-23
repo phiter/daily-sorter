@@ -26,14 +26,14 @@ defineProps({
 <style lang="scss" scoped>
 .person {
   flex: 1;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-person-border);
   border-radius: 4px;
   margin: 5px auto;
   display: flex;
   max-width: 300px;
   width: 100%;
   &:hover {
-    background: #6ddaff4b;
+    background: var(--color-person-hover);
     .remove {
       visibility: visible;
     }
