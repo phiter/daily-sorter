@@ -20,7 +20,7 @@ defineExpose({ load });
 </script>
 
 <template>
-  <div v-if="question" class="max-w-lg mx-auto text-center px-4">
+  <div v-if="question" class="mx-auto text-center px-4">
     <p v-if="title" class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">{{ title }}</p>
     <p class="text-gray-800 dark:text-gray-200 font-medium">{{ uppercaseFirstLetter(question) }}</p>
     <div class="mt-6">

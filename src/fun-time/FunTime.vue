@@ -44,12 +44,19 @@ const handleGo = () => {
 
     <div class="flex justify-center">
       <div class="fun-block relative inline-flex items-stretch rounded-xl shadow-sm" style="z-index: 0">
-        <select
-          class="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-r-0 text-gray-800 dark:text-gray-200 text-sm focus:outline-none rounded-l-xl cursor-pointer"
-          v-model="selectedType"
-        >
-          <option v-for="(_, title) in options" :key="title">{{ title }}</option>
-        </select>
+        <div class="relative flex items-stretch">
+          <select
+            class="appearance-none pl-4 pr-8 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 border-r-0 text-gray-800 dark:text-gray-200 text-sm focus:outline-none rounded-l-xl cursor-pointer"
+            v-model="selectedType"
+          >
+            <option v-for="(_, title) in options" :key="title">{{ title }}</option>
+          </select>
+          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+        </div>
         <button
           class="px-3 py-2.5 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-500 text-white transition cursor-pointer"
           title="Choose random type"

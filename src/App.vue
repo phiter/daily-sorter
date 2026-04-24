@@ -41,7 +41,7 @@
   </div>
 
   <!-- Sorted list -->
-  <div class="max-w-sm mx-auto mb-12 relative">
+  <div class="max-w-md mx-auto mb-12 relative">
     <!-- Static arrow connectors — not part of the animation -->
     <div aria-hidden="true" class="pointer-events-none">
       <div
