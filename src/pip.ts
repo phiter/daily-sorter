@@ -9,8 +9,9 @@ export const openPip = async () => {
 
     // Copy styles
     [...document.styleSheets].forEach((styleSheet) => {
+        if (!styleSheet) return;
         try {
-            const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+            const cssRules = styleSheet.cssRules ? [...styleSheet.cssRules].map((rule) => rule.cssText).join('') : '';
             const style = document.createElement('style');
         
             style.textContent = cssRules;
