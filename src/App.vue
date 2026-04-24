@@ -1,26 +1,77 @@
 <template>
-  <div class="top-controls">
-    <button class="pip-button" v-if="isPipEnabled" @click="openPip" title="Picture in picture">
-      ⧉
-    </button>
-    <button class="theme-toggle" @click="toggleDark" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-      {{ isDark ? '☀️' : '🌙' }}
-    </button>
+  <!-- Top controls -->
+  <div class="fixed top-3 right-4 flex gap-2 z-50">
+    <button
+      v-if="isPipEnabled"
+      @click="openPip"
+      title="Picture in picture"
+      class="pip-button bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg text-xl px-2.5 py-1 cursor-pointer text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+    >⧉</button>
+    <button
+      @click="toggleDark"
+      :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+      class="theme-toggle bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg text-xl px-2.5 py-1 cursor-pointer text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+    >{{ isDark ? '☀️' : '🌙' }}</button>
   </div>
-  <label>
-    <div>List of names, comma separated:</div>
-    <textarea class="people" v-model="namesString" />
-  </label>
-  <div>
-    <button class="sort" @click="sortNames">Sort</button>
-    <button class="next" @click="next">Next</button>
+
+  <!-- Header -->
+  <header class="mb-10">
+    <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Daily Sorter</h1>
+  </header>
+
+  <!-- Input section -->
+  <div class="max-w-lg mx-auto mb-8">
+    <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 text-left">
+      Names, comma separated
+    </label>
+    <textarea
+      class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition resize-y min-h-[64px] text-sm shadow-sm"
+      v-model="namesString"
+    />
+    <div class="flex gap-3 mt-4 justify-center">
+      <button
+        @click="sortNames"
+        class="px-6 py-2.5 rounded-lg bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-400 text-white font-semibold text-sm transition-all active:scale-95 shadow-sm cursor-pointer"
+      >Sort</button>
+      <button
+        @click="next"
+        class="px-6 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition-all active:scale-95 shadow-sm cursor-pointer"
+      >Next</button>
+    </div>
   </div>
-  <ul class="sorted">
-    <template v-for="(person, index) of sortedNames" :key="person.name + index">
-      <Person :person="person" @removePerson="removePerson(index)" />
-      <div v-if="index !== sortedNames.length - 1" class="arrow" />
-    </template>
-  </ul>
+
+  <!-- Sorted list -->
+  <div class="max-w-sm mx-auto mb-12 relative">
+    <!-- Static arrow connectors — not part of the animation -->
+    <div aria-hidden="true" class="pointer-events-none">
+      <div
+        v-for="n in sortedNames.length - 1"
+        :key="n"
+        class="absolute left-1/2 -translate-x-1/2"
+        :style="{ top: `calc(${n} * 4.25rem - 1.25rem)` }"
+      >
+        <svg class="w-4 h-4 text-indigo-400 dark:text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+
+    <TransitionGroup
+      name="list"
+      appear
+      tag="div"
+      class="flex flex-col gap-6"
+    >
+      <div
+        v-for="(person, index) of sortedNames"
+        :key="person.id"
+        :style="{ '--i': index }"
+      >
+        <Person :person="person" @removePerson="removePerson(index)" />
+      </div>
+    </TransitionGroup>
+  </div>
+
   <FunTime />
 </template>
 
@@ -88,15 +139,16 @@ const names = computed(() => namesString.value.split(',').map(name => name.trim(
 const sortedNames = ref<IPerson[]>([]);
 
 const sortNames = () => {
-   const namesArray = shuffle([...names.value]);
-   const people: IPerson[] = [];
-   namesArray.forEach((name) => {
-     people.push({
-       done: false,
-       name
-    });
+  const namesArray = shuffle([...names.value]);
+  const existingPeople = [...sortedNames.value];
+  sortedNames.value = namesArray.map(name => {
+    const existingIdx = existingPeople.findIndex(p => p.name === name);
+    if (existingIdx !== -1) {
+      const [existing] = existingPeople.splice(existingIdx, 1);
+      return { ...existing, done: false };
+    }
+    return { id: Math.random().toString(36).slice(2), done: false, name };
   });
-  sortedNames.value = people;
 };
 
 sortNames();
@@ -116,139 +168,30 @@ watch(names, () => {
 });
 </script>
 
-<style lang="scss">
-:root {
-  --color-text: #2c3e50;
-  --color-bg: #ffffff;
-  --color-surface: #ffffff;
-  --color-border: #6ddbff;
-  --color-accent: #6d9bff;
-  --color-person-border: rgba(0, 0, 0, 0.2);
-  --color-person-hover: rgba(109, 218, 255, 0.29);
-  --color-input-bg: #ffffff;
+<style>
+.list-move {
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-html.dark {
-  --color-text: #c9d1d9;
-  --color-bg: #0d1117;
-  --color-surface: #161b22;
-  --color-border: #4aa8cc;
-  --color-accent: #5a85e0;
-  --color-person-border: rgba(255, 255, 255, 0.15);
-  --color-person-hover: rgba(109, 218, 255, 0.15);
-  --color-input-bg: #1c2128;
+.list-enter-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition-delay: calc(var(--i, 0) * 60ms);
 }
 
-body {
-  background: var(--color-bg);
-  transition: background 0.2s, color 0.2s;
-}
-
-* {
-  box-sizing: border-box;
-}
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: var(--color-text);
-  margin-top: 60px;
-  margin: 60px auto;
-  padding-top: 50px;
-  transition: color 0.2s;
-}
-.top-controls {
-  position: fixed;
-  top: 12px;
-  right: 16px;
-  display: flex;
-  gap: 6px;
-  z-index: 100;
-}
-.theme-toggle,
-.pip-button {
-  background: none;
-  border: 1px solid var(--color-person-border);
-  border-radius: 8px;
-  font-size: 20px;
-  padding: 4px 10px;
-  cursor: pointer;
-  color: var(--color-text);
-  &:hover {
-    background: var(--color-person-hover);
-  }
-}
-#app.pip {
-  margin: 8px auto 30px;
-  .pip-button {
-    display: none;
-  }
-}
-
-@media (min-width: 1200px) {
-  #app {
-    width: 80%;
-  }
-}
-.sorted {
-  list-style: none;
-  display: flex;
-  justify-content:  stretch;
-  align-items: stretch;
-  flex-direction: column;
-  padding: 0;
-  user-select: none;
-}
-.arrow {
-  border: 2px solid var(--color-accent);
-  border-top-color: transparent;
-  border-right-color: transparent;
-  width: 12px;
-  height: 12px;
-  transform: rotate(-45deg);
-  margin: 3px auto;
-  margin-bottom: 10px;
-  position: relative;
-  right: 5px;
-}
-.people {
+.list-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  position: absolute;
   width: 100%;
-  max-width: 600px;
-  resize: vertical;
-  border: 1px solid var(--color-border);
-  padding: 10px;
-  border-radius: 5px;
-  background: var(--color-input-bg);
-  color: var(--color-text);
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-.sort {
-  background: var(--color-border);
-  border: white;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 10px;
-}
-.next {
-  background: var(--color-accent);
-  border: white;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border-radius: 10px;
-  margin-left: 20px;
 }
 
-button {
-  cursor: pointer;
-  font-weight: bold;
-  &:hover {
-    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
-  }
-  &:active {
-    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75) inset;
-  }
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(-14px) scale(0.97);
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 </style>
+

@@ -20,12 +20,16 @@ defineExpose({ load });
 </script>
 
 <template>
-  <div v-if="question" style="font-weight: bold">
-    <h4 v-if="title">{{ title }}</h4>
-    {{ uppercaseFirstLetter(question) }}
-    <div style="margin-top: 30px">
-      <button v-if="!revealAnswer" class="sort" @click="revealAnswer = true">Reveal</button>
-      <div v-else style="margin-top: 30px; font-weight: bold">{{ answer }}</div>
+  <div v-if="question" class="max-w-lg mx-auto text-center px-4">
+    <p v-if="title" class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">{{ title }}</p>
+    <p class="text-gray-800 dark:text-gray-200 font-medium">{{ uppercaseFirstLetter(question) }}</p>
+    <div class="mt-6">
+      <button
+        v-if="!revealAnswer"
+        @click="revealAnswer = true"
+        class="px-6 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition active:scale-95 cursor-pointer"
+      >Reveal</button>
+      <p v-else class="mt-6 text-gray-800 dark:text-gray-200 font-semibold">{{ answer }}</p>
     </div>
   </div>
 </template>

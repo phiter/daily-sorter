@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#6366f1"/>
+  <!-- Person 1 (current speaker, fully opaque) -->
+  <circle cx="8" cy="9" r="3" fill="white"/>
+  <rect x="14" y="7.5" width="13" height="3" rx="1.5" fill="white"/>
+  <!-- Person 2 -->
+  <circle cx="8" cy="17" r="3" fill="white" opacity="0.65"/>
+  <rect x="14" y="15.5" width="10" height="3" rx="1.5" fill="white" opacity="0.65"/>
+  <!-- Person 3 -->
+  <circle cx="8" cy="25" r="3" fill="white" opacity="0.35"/>
+  <rect x="14" y="23.5" width="7" height="3" rx="1.5" fill="white" opacity="0.35"/>
+</svg>

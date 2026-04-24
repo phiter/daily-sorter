@@ -19,11 +19,15 @@ defineExpose({ load });
 </script>
 
 <template>
-  <div v-if="setup" style="font-weight: bold">
-    {{ uppercaseFirstLetter(setup) }}
-    <div v-if="punchline" style="margin-top: 30px">
-      <button v-if="!revealPunchline" class="sort" @click="revealPunchline = true">Reveal</button>
-      <div v-else style="margin-top: 30px; font-weight: bold">{{ punchline }}</div>
+  <div v-if="setup" class="max-w-lg mx-auto text-center px-4">
+    <p class="text-gray-800 dark:text-gray-200 font-medium">{{ uppercaseFirstLetter(setup) }}</p>
+    <div v-if="punchline" class="mt-6">
+      <button
+        v-if="!revealPunchline"
+        @click="revealPunchline = true"
+        class="px-6 py-2.5 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white font-semibold text-sm transition active:scale-95 cursor-pointer"
+      >Reveal</button>
+      <p v-else class="mt-6 text-gray-800 dark:text-gray-200 font-semibold">{{ punchline }}</p>
     </div>
   </div>
 </template>

@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  button {
+    @apply select-none;
+  }
+
+  body {
+    @apply bg-gray-200 dark:bg-gray-900 transition-colors duration-200 antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  #app {
+    @apply text-center mx-auto max-w-2xl pt-16 pb-20 px-4;
+    min-height: 100vh;
+  }
+
+  #app.pip {
+    @apply pt-3 mb-8;
+  }
+
+  #app.pip .pip-button {
+    display: none;
+  }
+}

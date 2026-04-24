@@ -18,10 +18,8 @@ defineExpose({ load });
 </script>
 
 <template>
-  <div v-if="title" style="font-weight: bold">
-    {{ title }}
-    <div style="margin-top: 30px">
-      <img height="400" :src="image" :alt="imageAlt" />
-    </div>
+  <div v-if="title" class="text-center px-4">
+    <p class="text-gray-800 dark:text-gray-200 font-semibold mb-6">{{ title }}</p>
+    <img v-if="image" class="max-w-full mx-auto rounded-xl shadow-md" :src="image" :alt="imageAlt" />
   </div>
 </template>

@@ -13,5 +13,7 @@ defineExpose({ load });
 </script>
 
 <template>
-  <div v-if="fact" style="font-weight: bold">{{ uppercaseFirstLetter(fact) }}</div>
+  <div v-if="fact" class="max-w-lg mx-auto text-center px-4">
+    <p class="text-gray-800 dark:text-gray-200 font-medium">{{ uppercaseFirstLetter(fact) }}</p>
+  </div>
 </template>
