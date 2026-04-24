@@ -45,7 +45,7 @@
     <!-- Static arrow connectors — not part of the animation -->
     <div aria-hidden="true" class="pointer-events-none">
       <div
-        v-for="n in sortedNames.length - 1"
+        v-for="n in Math.max(0, sortedNames.length - 1)"
         :key="n"
         class="absolute left-1/2 -translate-x-1/2"
         :style="{ top: `calc(${n} * 4.25rem - 1.25rem)` }"
