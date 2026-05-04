@@ -319,7 +319,7 @@ defineExpose({ load: init });
       </div>
       <div v-if="submitted" class="result-row">
         <span class="result-badge distance">📏 <strong>{{ distance?.toLocaleString() }} km</strong></span>
-        <span class="result-badge score">🏆 <strong>{{ score?.toLocaleString() }}</strong> / 5 000</span>
+        <span class="result-badge score">🏆 <strong>{{ score?.toLocaleString() }}</strong> / 5000</span>
       </div>
     </div>
   </div>
@@ -394,10 +394,13 @@ $map-h-lg: 510px;
   z-index: 10;
   width: $map-w-sm;
   border-radius: 10px;
-  overflow: visible;
+  overflow: hidden;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.6);
   background: #1f1f1f;
   transition: width 0.3s ease, box-shadow 0.2s;
+  max-height: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
@@ -423,6 +426,7 @@ $map-h-lg: 510px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 10px 10px 0 0;
   gap: 8px;
+  flex: 0 0 auto;
 }
 
 .map-hint {
@@ -449,6 +453,8 @@ $map-h-lg: 510px;
 .map-canvas {
   width: 100%;
   height: $map-h-sm;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   transition: height 0.3s ease;
 
@@ -465,12 +471,24 @@ $map-h-lg: 510px;
   padding: 8px;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 0 0 10px 10px;
+  flex: 0 0 auto;
 }
 
 .confirm-btn {
   width: 100%;
   padding: 8px;
   font-size: 14px;
+  font-weight: 600;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #4f46e5;
+  }
 
   &:disabled {
     opacity: 0.4;
@@ -495,6 +513,8 @@ $map-h-lg: 510px;
   background: rgba(255, 255, 255, 0.07);
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: 600;
   &.distance strong { color: #00ff00; }
   &.score strong { color: #ffd700; }
 }
