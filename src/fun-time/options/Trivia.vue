@@ -12,7 +12,7 @@ const load = async () => {
   question.value = '';
   answer.value = '';
   revealAnswer.value = false;
-  const response = await fetch('https://api.api-ninjas.com/v1/trivia', ninjaHeaders).then(r => r.json());
+  const response = await fetch('https://api.api-ninjas.com/v1/triviaoftheday', ninjaHeaders).then(r => r.json());
   const item = response[0];
   category.value = item.category;
   question.value = item.question;

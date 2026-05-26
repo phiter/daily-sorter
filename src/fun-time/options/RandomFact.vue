@@ -5,7 +5,7 @@ import { uppercaseFirstLetter, ninjaHeaders } from '../utils';
 const fact = ref('');
 
 const load = async () => {
-  const response = await fetch('https://api.api-ninjas.com/v1/facts', ninjaHeaders).then(r => r.json());
+  const response = await fetch('https://api.api-ninjas.com/v1/factoftheday', ninjaHeaders).then(r => r.json());
   fact.value = response[0].fact;
 };
 
