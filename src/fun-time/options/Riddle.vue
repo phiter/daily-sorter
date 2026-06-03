@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { uppercaseFirstLetter } from '../utils';
+import Spinner from '../Spinner.vue';
 
 const categories = ['logic', 'funny', 'mystery', 'science', 'math', 'who-am-i'] as const;
 type Category = typeof categories[number];
@@ -9,15 +10,21 @@ const selectedCategory = ref<Category | null>(null);
 const question = ref('');
 const answer = ref('');
 const revealAnswer = ref(false);
+const loading = ref(false);
 
 const fetchRiddle = async (category: Category) => {
   selectedCategory.value = category;
   revealAnswer.value = false;
   question.value = '';
   answer.value = '';
-  const response = await fetch(`https://riddles-api-eight.vercel.app/${category}`).then(r => r.json());
-  question.value = response.riddle;
-  answer.value = response.answer;
+  loading.value = true;
+  try {
+    const response = await fetch(`https://riddles-api-eight.vercel.app/${category}`).then(r => r.json());
+    question.value = response.riddle;
+    answer.value = response.answer;
+  } finally {
+    loading.value = false;
+  }
 };
 
 const fetchRandom = () => {
@@ -58,7 +65,9 @@ defineExpose({ load });
       >{{ cat }}</button>
     </div>
 
-    <div v-if="question">
+    <Spinner v-if="loading" />
+
+    <div v-else-if="question">
       <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">{{ selectedCategory }}</p>
       <p class="text-gray-800 dark:text-gray-200 font-medium">{{ uppercaseFirstLetter(question) }}</p>
       <div class="mt-6">
