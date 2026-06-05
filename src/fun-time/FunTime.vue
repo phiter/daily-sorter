@@ -10,16 +10,18 @@ import CatFact from './options/CatFact.vue';
 import RandomLocation from './options/RandomLocation.vue';
 import DayInHistory from './options/DayInHistory.vue';
 
-const options = {
-  '😜 Joke time!': JokeTime,
-  '🧠 Trivia': Trivia,
-  '🤓 Random fact': RandomFact,
-  '💻 Random xkcd': RandomXkcd,
-  '❓ Riddle': Riddle,
-  // '🐶 Dog fact': DogFact,
-  '🐱 Cat fact': CatFact,
-  '🌍 Random location': RandomLocation,
-  '📅 Day in history': DayInHistory,
+type Option = { component: any; fullBleed?: boolean };
+
+const options: Record<string, Option> = {
+  '😜 Joke time!': { component: JokeTime },
+  '🧠 Trivia': { component: Trivia },
+  '🤓 Random fact': { component: RandomFact },
+  '💻 Random xkcd': { component: RandomXkcd, fullBleed: true },
+  '❓ Riddle': { component: Riddle },
+  // '🐶 Dog fact': { component: DogFact },
+  '🐱 Cat fact': { component: CatFact },
+  '🌍 Random location': { component: RandomLocation, fullBleed: true },
+  '📅 Day in history': { component: DayInHistory },
 };
 
 type OptionKey = keyof typeof options;
@@ -28,7 +30,8 @@ const isOpen = ref(false);
 const selectedType = ref<OptionKey | null>(null);
 const optionRef = ref<{ load: () => void } | null>(null);
 
-const currentComponent = computed(() => selectedType.value ? options[selectedType.value] : null);
+const currentComponent = computed(() => selectedType.value ? options[selectedType.value].component : null);
+const isFullBleed = computed(() => selectedType.value ? !!options[selectedType.value].fullBleed : false);
 
 const selectOption = async (key: OptionKey) => {
   if (selectedType.value === key) {
@@ -82,7 +85,7 @@ const selectRandomType = async () => {
           class="fun-btn-wrap relative z-0"
         >
           <button
-            @click="selectOption(title as OptionKey)"
+            @click="selectOption(title)"
             :class="[
               'w-full px-3 py-2.5 rounded-xl text-sm font-medium transition cursor-pointer border text-left',
               selectedType === title
@@ -93,7 +96,7 @@ const selectRandomType = async () => {
         </div>
       </div>
 
-      <div class="mt-8" :class="['🌍 Random location', '💻 Random xkcd'].includes(selectedType ?? '') ? 'full-bleed' : ''">
+      <div class="mt-8" :class="{ 'full-bleed': isFullBleed }">
         <component v-if="selectedType" :is="currentComponent" :key="selectedType" ref="optionRef" />
       </div>
     </div>
