@@ -93,7 +93,7 @@ const selectRandomType = async () => {
         </div>
       </div>
 
-      <div class="mt-8" :class="['🌍 Random location (beta)', '💻 Random xkcd'].includes(selectedType ?? '') ? 'full-bleed' : ''">
+      <div class="mt-8" :class="['🌍 Random location', '💻 Random xkcd'].includes(selectedType ?? '') ? 'full-bleed' : ''">
         <component v-if="selectedType" :is="currentComponent" :key="selectedType" ref="optionRef" />
       </div>
     </div>
