@@ -1,6 +1,6 @@
 <template>
   <!-- Top controls -->
-  <div class="fixed top-3 right-4 flex gap-2 z-50">
+  <div :class="['fixed top-3 flex gap-2 z-50', funTimeOnly ? 'left-4' : 'right-4']">
     <button
       v-if="isPipEnabled && !funTimeOnly"
       @click="openPip"
