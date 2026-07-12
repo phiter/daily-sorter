@@ -2,7 +2,7 @@
   <!-- Top controls -->
   <div class="fixed top-3 right-4 flex gap-2 z-50">
     <button
-      v-if="isPipEnabled"
+      v-if="isPipEnabled && !funTimeOnly"
       @click="openPip"
       title="Picture in picture"
       class="pip-button bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg text-xl px-2.5 py-1 cursor-pointer text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"

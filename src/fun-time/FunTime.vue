@@ -26,7 +26,8 @@ const options: Record<string, Option> = {
 
 type OptionKey = keyof typeof options;
 
-const isOpen = ref(false);
+const funTimeOnly = new URLSearchParams(window.location.search).get('funTimeOnly') === 'true';
+const isOpen = ref(funTimeOnly);
 const selectedType = ref<OptionKey | null>(null);
 const optionRef = ref<{ load: () => void } | null>(null);
 
@@ -53,7 +54,7 @@ const selectRandomType = async () => {
 </script>
 
 <template>
-  <div class="mt-16 border-t border-gray-100 dark:border-gray-800 pt-10">
+  <div :class="funTimeOnly ? 'mt-4' : 'mt-16 border-t border-gray-100 dark:border-gray-800 pt-10'">
     <div class="flex items-center justify-center gap-3 mb-6">
       <button
         class="flex items-center gap-2 group cursor-pointer"

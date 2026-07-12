@@ -382,8 +382,8 @@ defineExpose({ load: init });
   }
 }
 
-$map-w-sm: 480px;
-$map-h-sm: 340px;
+$map-w-sm: 336px;
+$map-h-sm: 238px;
 $map-w-lg: 960px;
 $map-h-lg: 510px;
 
