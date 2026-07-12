@@ -1,0 +1,23 @@
+src/fun-time/FunTime.vue
+  s_dc946c43811936::t_5f6f14a9105f05 29-30,57
+src/App.vue
+  s_dc946c43811936::t_192c99ff607252 5
+src/fun-time/options/RandomLocation.vue
+  s_dc946c43811936::t_5f6f14a9105f05 385-386
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "d0918171697be3d5f7a5606f3665b77c8735aba0",
+  "prompts": {},
+  "sessions": {
+    "s_dc946c43811936": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "f6eb21da-4c99-4f59-b393-a9175ba3d3c8",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Phiter Fernandes <phiterfernandes@gmail.com>"
+    }
+  }
+}
