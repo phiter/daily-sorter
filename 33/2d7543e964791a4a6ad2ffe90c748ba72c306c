@@ -1,0 +1,19 @@
+src/App.vue
+  s_dc946c43811936::t_6989d33e100367 18,23,44,136
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "332d7543e964791a4a6ad2ffe90c748ba72c306c",
+  "prompts": {},
+  "sessions": {
+    "s_dc946c43811936": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "f6eb21da-4c99-4f59-b393-a9175ba3d3c8",
+        "model": "gpt-5.3-codex"
+      },
+      "human_author": "Phiter Fernandes <phiterfernandes@gmail.com>"
+    }
+  }
+}
