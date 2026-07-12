@@ -15,12 +15,12 @@
   </div>
 
   <!-- Header -->
-  <header class="mb-10">
+  <header v-if="!funTimeOnly" class="mb-10">
     <h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Daily Sorter</h1>
   </header>
 
   <!-- Input section -->
-  <div class="max-w-lg mx-auto mb-8">
+  <div v-if="!funTimeOnly" class="max-w-lg mx-auto mb-8">
     <label class="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2 text-left">
       Names, comma separated
     </label>
@@ -41,7 +41,7 @@
   </div>
 
   <!-- Sorted list -->
-  <div class="max-w-md mx-auto mb-12 relative">
+  <div v-if="!funTimeOnly" class="max-w-md mx-auto mb-12 relative">
     <!-- Static arrow connectors — not part of the animation -->
     <div aria-hidden="true" class="pointer-events-none">
       <div
@@ -133,6 +133,7 @@ const shuffle = function (array: string[]) {
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlNames = urlParams.get('names') || '';
+const funTimeOnly = urlParams.get('funTimeOnly') === 'true';
 
 const namesString = ref<string>(urlNames);
 const names = computed(() => namesString.value.split(',').map(name => name.trim()).filter(s => s));
